@@ -10,19 +10,34 @@ const ContactSection = () => {
   const t = translations.contact;
   const EMAIL = "info@mor-data.com";
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setSending(true);
 
-    // Send via mailto (opens email client as fallback)
-    const subject = encodeURIComponent(`Contact from ${form.name} - ${form.company || "N/A"}`);
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company || "N/A"}\n\nMessage:\n${form.message}`
-    );
-    window.open(`mailto:${EMAIL}?subject=${subject}&body=${body}`, "_self");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    toast.success(t.success[lang]);
-    setForm({ name: "", email: "", company: "", message: "" });
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        const message = result?.error ?? "Unable to send message. Please try again later.";
+        toast.error(message);
+        return;
+      }
+
+      toast.success(t.success[lang]);
+      setForm({ name: "", email: "", company: "", message: "" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Unable to send message. Please try again later.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const inputClass = "w-full bg-secondary border-transparent focus:bg-background focus:border-primary/40 border rounded-sm px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-200";
@@ -133,9 +148,10 @@ const ContactSection = () => {
             />
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold text-sm hover:opacity-90 transition-opacity"
+              disabled={sending}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-sm px-6 py-3 text-sm font-semibold transition-opacity disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-primary-foreground hover:opacity-90"
             >
-              {t.send[lang]}
+              {sending ? (t.sending?.[lang] ?? "Sending...") : t.send[lang]}
               <Send size={16} />
             </button>
           </motion.form>

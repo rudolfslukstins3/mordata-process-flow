@@ -197,6 +197,7 @@ export const translations = {
     company: { lv: "Uzņēmums (neobligāti)", en: "Company (optional)" },
     message: { lv: "Ziņojums", en: "Message" },
     send: { lv: "Nosūtīt", en: "Send Message" },
+    sending: { lv: "Nosūtu...", en: "Sending..." },
     success: {
       lv: "Paldies! Jūsu ziņa ir nosūtīta. Mēs ar jums sazināsimies drīzumā.",
       en: "Thank you! Your message has been sent. We will contact you shortly.",
