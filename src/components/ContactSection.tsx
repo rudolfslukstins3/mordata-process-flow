@@ -8,6 +8,7 @@ import { toast } from "sonner";
 const ContactSection = () => {
   const { lang } = useLang();
   const t = translations.contact;
+  const EMAIL = "info@mor-data.com";
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
 
   const handleSubmit = (e: FormEvent) => {
@@ -18,7 +19,7 @@ const ContactSection = () => {
     const body = encodeURIComponent(
       `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company || "N/A"}\n\nMessage:\n${form.message}`
     );
-    window.open(`mailto:info@mor-data.com?subject=${subject}&body=${body}`, "_self");
+    window.open(`mailto:${EMAIL}?subject=${subject}&body=${body}`, "_self");
 
     toast.success(t.success[lang]);
     setForm({ name: "", email: "", company: "", message: "" });
@@ -55,8 +56,8 @@ const ContactSection = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">{t.info.emailLabel[lang]}</p>
-                <a href="mailto:info@mor-data.com" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                  info@mor-data.com
+                <a href={`mailto:${EMAIL}`} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  {EMAIL}
                 </a>
               </div>
             </div>
